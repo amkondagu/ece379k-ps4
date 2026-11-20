@@ -4,3 +4,14 @@
 *.ptx
 *.cubin
 *.fatbin
+
+# Build products and generated simulation/profiler data
+/code/nbody_serial
+/code/compare
+/code/nbody
+/code/frame_pipeline
+*.bin
+*.ncu-rep
+*.nsys-rep
+*.sqlite
+*.qdrep

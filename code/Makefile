@@ -24,7 +24,7 @@ nbody_serial: Q1_nbody_serial.cpp
 compare: Q1_compare.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
-# Your Q1 GPU version (Part a).  Create nbody.cu first.
+# Q1 GPU version (Part a): direct port.
 nbody: nbody.cu check.h
 	$(NVCC) $(NVFLAGS) -o $@ $<
 
