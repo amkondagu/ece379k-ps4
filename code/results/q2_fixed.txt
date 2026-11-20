@@ -1,0 +1,538 @@
+/home1/apps/nvidia/Linux_aarch64/24.7/compilers/bin/nsys
+/home1/apps/nvidia/Linux_aarch64/24.7/compilers/bin/ncu
+/usr/bin/python3
+2026-11-19T20:32:58-06:00
+c642-012.vista.tacc.utexas.edu
+71954afca7005e90e2c3bf5de28ae08ebc5364b1
+
+Currently Loaded Modules:
+  1) ucc/1.9.0   2) ucx/1.22.0   3) cmake/4.1.1   4) xalt/3.1   5) TACC   6) gcc/14.2.0   7) nvpl/26.9   8) cuda/12.8 (g)   9) openmpi/5.0.5
+
+  Where:
+   g:  built for GPU
+
+ 
+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:26:18_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+NVIDIA Nsight Systems version 2024.4.1.61-244134315967v0
+NVIDIA (R) Nsight Compute Command Line Profiler
+Copyright (c) 2018-2024 NVIDIA Corporation
+Version 2024.2.1.0 (build 34372528) (public-release)
+name, driver_version
+NVIDIA GH200 120GB, 615.71.09
+nvcc -O3 -arch=sm_90 -lineinfo -Xcompiler -Wall,-Wextra -o frame_pipeline Q2_frame_pipeline.cu
+nvcc -O3 -arch=sm_90 -lineinfo -Xcompiler -Wall,-Wextra -o frame_pipeline_baseline Q2_frame_pipeline_baseline.cu
+Predictions (individual fixes are compared against the unchanged baseline):
+calibrate: global load/store sectors/request should approach 4 from about
+  32; fewer sectors and shorter kernel time, possibly higher HBM utilization.
+vignette: launches fall from 32768 to 8, and total timed launches from
+  32792 to 32. Host launch time, total GPU stage time, and gaps should fall.
+rotate: padding changes the shared column from 32 passes to 1; bank
+  conflicts should approach zero and shared-load wavefronts drop about 32x.
+histogram: at most 1024*256=262144 global atomic updates/frame, versus
+  16777216 originally (at least 64x fewer). Global RED instructions and
+  L2 reduction sectors should fall; shared ATOMS increase. Warp matching
+  combines same-bin lanes and warp-private counters avoid cross-warp
+  contention. Some local atomic and final-merge contention remains.
+All: 32 timed launches; stage costs may shift after dominant costs vanish.
+Use unprofiled medians for speedups, not Nsight replay-inflated timings.
+=== Unprofiled: baseline ===
+    0       15     5406137        16366
+    1       15     5405729        16525
+    2       15     5407781        16286
+    3       15     5407117        16281
+    4       15     5408113        16268
+    5       15     5408003        16423
+    6       15     5406448        16465
+    7       15     5407839        16582
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 156.12 ms for 8 frames (19.515 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 156.17 ms for 8 frames (19.522 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 156.04 ms for 8 frames (19.505 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 155.84 ms for 8 frames (19.480 ms per frame)
+=== Systems: baseline ===
+calibrate: launches=8, total=2.256 ms, mean=281.972 us
+vignette_row: launches=32768, total=38.537 ms, mean=1.176 us
+rotate: launches=8, total=1.036 ms, mean=129.512 us
+histogram: launches=8, total=82.614 ms, mean=10326.808 us
+Pipeline launches=32792; gaps total=31.301 ms, mean=0.955 us, max=4.768 us
+cudaLaunchKernel, including setup: calls=32794, host total=139.522 ms
+Whole-program copies (CUPTI kind, bytes): [(2, 67117056)]
+=== Unprofiled: calibrate ===
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 154.25 ms for 8 frames (19.281 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 154.25 ms for 8 frames (19.281 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 154.70 ms for 8 frames (19.338 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 154.32 ms for 8 frames (19.290 ms per frame)
+=== Systems: calibrate ===
+calibrate_coalesced: launches=8, total=0.651 ms, mean=81.332 us
+vignette_row: launches=32768, total=38.568 ms, mean=1.177 us
+rotate: launches=8, total=1.035 ms, mean=129.376 us
+histogram: launches=8, total=82.615 ms, mean=10326.896 us
+Pipeline launches=32792; gaps total=30.835 ms, mean=0.940 us, max=5.696 us
+cudaLaunchKernel, including setup: calls=32794, host total=137.596 ms
+Whole-program copies (CUPTI kind, bytes): [(1, 16384), (2, 67117056)]
+=== Unprofiled: vignette ===
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 86.37 ms for 8 frames (10.796 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 86.28 ms for 8 frames (10.785 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 86.27 ms for 8 frames (10.784 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 86.27 ms for 8 frames (10.784 ms per frame)
+=== Systems: vignette ===
+calibrate: launches=8, total=2.266 ms, mean=283.304 us
+vignette_frame: launches=8, total=0.448 ms, mean=55.944 us
+rotate: launches=8, total=1.035 ms, mean=129.428 us
+histogram: launches=8, total=82.616 ms, mean=10326.971 us
+Pipeline launches=32; gaps total=0.054 ms, mean=1.754 us, max=5.696 us
+cudaLaunchKernel, including setup: calls=34, host total=0.249 ms
+Whole-program copies (CUPTI kind, bytes): [(1, 16384), (2, 67117056)]
+=== Unprofiled: rotate ===
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 155.54 ms for 8 frames (19.442 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 151.47 ms for 8 frames (18.934 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 155.49 ms for 8 frames (19.436 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 155.31 ms for 8 frames (19.413 ms per frame)
+=== Systems: rotate ===
+calibrate: launches=8, total=2.251 ms, mean=281.352 us
+vignette_row: launches=32768, total=38.589 ms, mean=1.178 us
+rotate_padded: launches=8, total=0.634 ms, mean=79.196 us
+histogram: launches=8, total=82.614 ms, mean=10326.799 us
+Pipeline launches=32792; gaps total=32.089 ms, mean=0.979 us, max=4.512 us
+cudaLaunchKernel, including setup: calls=32794, host total=140.071 ms
+Whole-program copies (CUPTI kind, bytes): [(1, 16384), (2, 67117056)]
+=== Unprofiled: histogram ===
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 69.54 ms for 8 frames (8.693 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 69.10 ms for 8 frames (8.637 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 73.70 ms for 8 frames (9.213 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 69.63 ms for 8 frames (8.703 ms per frame)
+=== Systems: histogram ===
+calibrate: launches=8, total=2.230 ms, mean=278.776 us
+vignette_row: launches=32768, total=38.338 ms, mean=1.170 us
+rotate: launches=8, total=1.033 ms, mean=129.084 us
+histogram_local: launches=8, total=0.331 ms, mean=41.424 us
+Pipeline launches=32792; gaps total=30.854 ms, mean=0.941 us, max=4.448 us
+cudaLaunchKernel, including setup: calls=32794, host total=66.901 ms
+Whole-program copies (CUPTI kind, bytes): [(1, 16384), (2, 67117056)]
+=== Unprofiled: all ===
+run=0 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 2.05 ms for 8 frames (0.257 ms per frame)
+run=1 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 2.05 ms for 8 frames (0.256 ms per frame)
+run=2 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 2.06 ms for 8 frames (0.257 ms per frame)
+run=3 (0=warmup); output matches baseline
+check (last frame): 0 wrong pixels, 0 wrong bins -> PASS
+pipeline: 2.05 ms for 8 frames (0.256 ms per frame)
+=== Systems: all ===
+calibrate_coalesced: launches=8, total=0.652 ms, mean=81.496 us
+vignette_frame: launches=8, total=0.459 ms, mean=57.316 us
+rotate_padded: launches=8, total=0.632 ms, mean=79.008 us
+histogram_local: launches=8, total=0.330 ms, mean=41.236 us
+Pipeline launches=32; gaps total=0.054 ms, mean=1.758 us, max=4.640 us
+cudaLaunchKernel, including setup: calls=34, host total=0.253 ms
+Whole-program copies (CUPTI kind, bytes): [(1, 16384), (2, 67117056)]
+=== Compute: baseline / calibrate ===
+Reusing original baseline report
+Kernel: calibrate(const float *, const float *, const float *, float *)
+  gpu__time_duration.sum = 402.336000 us
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 86.001521 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 6.383409 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 93.547665 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 16.269414 %
+  dram__bytes_read.sum = 201.945856 Mbyte
+  dram__bytes_write.sum = 61.370880 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 1,572,864 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 50331648.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 17149550.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 141.512809 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 13.985778 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 21.678293 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 1.800221 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 32.920903 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.042343 inst
+  Global ld sectors/request = 32.000
+  Global st sectors/request = 32.710
+=== Compute: baseline / vignette_row ===
+Reusing original baseline report
+Kernel: vignette_row(float *, float)
+  gpu__time_duration.sum = 2.432000 us
+  launch__grid_size = 16 
+  launch__waves_per_multiprocessor = 0.02 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 12.272813 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 0.361062 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 0.517498 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 0.199638 %
+  dram__bytes_read.sum = 19.200000 Kbyte
+  dram__bytes_write.sum = 0 byte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 128 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 512.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 128 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 512.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 31.673254 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 7.389706 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 1.317096 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: baseline / rotate ===
+Reusing original baseline report
+Kernel: rotate(const float *, float *)
+  gpu__time_duration.sum = 143.200000 us
+  launch__grid_size = 16,384 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 87.998318 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 18.351517 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 68.435182 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 19.965905 %
+  dram__bytes_read.sum = 67.120128 Mbyte
+  dram__bytes_write.sum = 47.892480 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2097152.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 16,352,796 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 16,877,084 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 17.293403 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 25.589967 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 7.455691 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0.025647 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 12.189771 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 19.893363 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 1.024810 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: baseline / histogram ===
+Reusing original baseline report
+Kernel: histogram(const float *, unsigned int *)
+  gpu__time_duration.sum = 10.309024 ms
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 82.528067 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 0.676177 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 1.451484 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 0.168425 %
+  dram__bytes_read.sum = 67.170560 Mbyte
+  dram__bytes_write.sum = 2.676480 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 0 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 0 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 524288.000000 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 14086966.000000 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 2297.375894 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 2297.049649 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 62.694407 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 14.950400 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 4805.452196 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.074063 inst
+  Global ld sectors/request = 4.000
+=== Compute: calibrate / calibrate_coalesced ===
+Kernel: calibrate_coalesced(const float *, const float *, const float *, float *)
+  gpu__time_duration.sum = 81.568000 us
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 74.006278 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 29.684406 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 79.309101 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 79.309101 %
+  dram__bytes_read.sum = 201.348096 Mbyte
+  dram__bytes_write.sum = 58.746368 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 1,572,864 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 6291456.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2097152.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 32.294164 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 1.330802 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.298692 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.620058 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.179363 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: vignette / vignette_frame ===
+Kernel: vignette_frame(float *, const float *)
+  gpu__time_duration.sum = 55.264000 us
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 73.714785 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 30.039175 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 48.111907 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 48.111907 %
+  dram__bytes_read.sum = 67.136000 Mbyte
+  dram__bytes_write.sum = 39.729152 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 1,048,576 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2621440.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2099028.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 30.000406 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 1.628498 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.160228 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0.000000 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.940407 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.278438 inst
+  Global ld sectors/request = 2.500
+  Global st sectors/request = 4.004
+=== Compute: rotate / rotate_padded ===
+Kernel: rotate_padded(const float *, float *)
+  gpu__time_duration.sum = 75.936000 us
+  launch__grid_size = 16,384 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 84.953978 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 34.711846 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 37.593185 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 37.593185 %
+  dram__bytes_read.sum = 67.127040 Mbyte
+  dram__bytes_write.sum = 47.613952 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2097152.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 20,780 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 545,068 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 18.431831 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 3.172870 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 2.363301 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0.000611 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 12.978622 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 1.386666 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.889538 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: histogram / histogram_local ===
+Kernel: histogram_local(const float *, unsigned int *)
+  gpu__time_duration.sum = 43.008000 us
+  launch__grid_size = 1,024 
+  launch__waves_per_multiprocessor = 0.97 
+  launch__registers_per_thread = 19.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 91.844027 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 49.720641 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 40.288122 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 40.288122 %
+  dram__bytes_read.sum = 67.120896 Mbyte
+  dram__bytes_write.sum = 2.560512 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 0 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 0 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 65,536 
+  smsp__inst_executed_op_global_red.sum = 6346.000000 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 12400.000000 sector
+  smsp__inst_executed_op_shared_atom.sum = 524288.000000 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 20.128112 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 3.462937 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.563837 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0.663288 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.011647 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.274221 inst
+  Global ld sectors/request = 4.000
+=== Compute: all / calibrate_coalesced ===
+Kernel: calibrate_coalesced(const float *, const float *, const float *, float *)
+  gpu__time_duration.sum = 82.144000 us
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 74.065510 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 29.403074 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 78.600537 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 78.600537 %
+  dram__bytes_read.sum = 201.346560 Mbyte
+  dram__bytes_write.sum = 58.375168 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 1,572,864 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 6291456.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2097152.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 32.601303 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 1.331101 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.309562 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.619430 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.177283 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: all / vignette_frame ===
+Kernel: vignette_frame(float *, const float *)
+  gpu__time_duration.sum = 55.648000 us
+  launch__grid_size = 65,536 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 73.566503 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 30.087666 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 47.763836 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 47.763836 %
+  dram__bytes_read.sum = 67.144448 Mbyte
+  dram__bytes_write.sum = 39.718400 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 1,048,576 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2621440.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2095356.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 0 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 29.221053 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 1.621487 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.161356 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0.000001 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.942622 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.263565 inst
+  Global ld sectors/request = 2.500
+  Global st sectors/request = 3.997
+=== Compute: all / rotate_padded ===
+Kernel: rotate_padded(const float *, float *)
+  gpu__time_duration.sum = 75.808000 us
+  launch__grid_size = 16,384 
+  launch__waves_per_multiprocessor = 62.06 
+  launch__registers_per_thread = 16.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 85.359658 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 34.627909 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 37.750601 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 37.750601 %
+  dram__bytes_read.sum = 67.126784 Mbyte
+  dram__bytes_write.sum = 47.986432 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 2097152.000000 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 15,139 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 539,427 
+  smsp__inst_executed_op_global_red.sum = 0 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 0 sector
+  smsp__inst_executed_op_shared_atom.sum = 0 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 18.614067 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 3.163637 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 2.379360 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0.000586 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 13.168276 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 1.380077 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.899923 inst
+  Global ld sectors/request = 4.000
+  Global st sectors/request = 4.000
+=== Compute: all / histogram_local ===
+Kernel: histogram_local(const float *, unsigned int *)
+  gpu__time_duration.sum = 43.520000 us
+  launch__grid_size = 1,024 
+  launch__waves_per_multiprocessor = 0.97 
+  launch__registers_per_thread = 19.000000 register/thread
+  sm__warps_active.avg.pct_of_peak_sustained_active = 91.777380 %
+  sm__throughput.avg.pct_of_peak_sustained_elapsed = 48.979847 %
+  gpu__compute_memory_throughput.avg.pct_of_peak_sustained_elapsed = 39.957656 %
+  gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed = 39.957656 %
+  dram__bytes_read.sum = 67.126784 Mbyte
+  dram__bytes_write.sum = 2.785024 Mbyte
+  l1tex__t_requests_pipe_lsu_mem_global_op_ld.sum = 524,288 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_ld.sum = 2097152.000000 sector
+  l1tex__t_requests_pipe_lsu_mem_global_op_st.sum = 0 
+  l1tex__t_sectors_pipe_lsu_mem_global_op_st.sum = 0 sector
+  l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_ld.sum = 0 
+  l1tex__data_pipe_lsu_wavefronts_mem_shared_op_ld.sum = 65,536 
+  smsp__inst_executed_op_global_red.sum = 6346.000000 inst
+  lts__t_sectors_srcunit_tex_op_red.sum = 12400.000000 sector
+  smsp__inst_executed_op_shared_atom.sum = 524288.000000 inst
+  smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio = 20.155775 inst
+  smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio = 3.464017 inst
+  smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio = 0.578569 inst
+  smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio = 0 inst
+  smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio = 0.583718 inst
+  smsp__average_warps_issue_stalled_drain_per_issue_active.ratio = 0.011647 inst
+  smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio = 0.271743 inst
+  Global ld sectors/request = 4.000
+Q2 correctness, individual fixes, combined timings, and profiles complete.
