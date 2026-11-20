@@ -196,3 +196,742 @@ body 0          = (-2.152665, 0.163392, -0.036344)
 body N-1        = (1.183058, -0.773793, 0.292533)
 time            = 0.306720 s  (0.030672 s/step)
 throughput      = 560.116 G interactions/s
+2026-11-19T20:12:59-06:00
+c642-012.vista.tacc.utexas.edu
+ee55395218e5738cccb12847c681564f420b093c
+
+Currently Loaded Modules:
+  1) ucc/1.9.0   2) ucx/1.22.0   3) cmake/4.1.1   4) xalt/3.1   5) TACC   6) gcc/14.2.0   7) nvpl/26.9   8) cuda/12.8 (g)   9) openmpi/5.0.5
+
+  Where:
+   g:  built for GPU
+
+ 
+
+g++ (GCC) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:26:18_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+Thu Nov 19 20:12:59 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000009:01:00.0 Off |                    0 |
+| N/A   27C    P0             83W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+g++ -std=c++20 -O2 -Wall -Wextra -o nbody_serial Q1_nbody_serial.cpp
+g++ -std=c++20 -O2 -Wall -Wextra -o compare Q1_compare.cpp
+nvcc -O3 -arch=sm_90 -lineinfo -Xcompiler -Wall,-Wextra -o nbody nbody.cu
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.001 s  (0.000 s/step)
+throughput      = 0.443 G interactions/s
+final state written to ref.bin
+version         = direct, threads/block = 256
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000589 s  (0.000059 s/step)
+throughput      = 1.122 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 128
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000285 s  (0.000028 s/step)
+throughput      = 2.318 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 256
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000295 s  (0.000029 s/step)
+throughput      = 2.241 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 512
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000305 s  (0.000031 s/step)
+throughput      = 2.164 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = optimized, threads/block = 128
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000128 s  (0.000013 s/step)
+throughput      = 5.142 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 3.725e-09 (body 214)
+rms position difference = 2.324e-10
+PASS
+version         = optimized, threads/block = 256
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000136 s  (0.000014 s/step)
+throughput      = 4.850 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 3.725e-09 (body 214)
+rms position difference = 2.324e-10
+PASS
+version         = optimized, threads/block = 512
+N = 257, steps = 10
+centre of mass  = (0.023835, -0.017018, -0.013355)
+mean radius     = 1.600504
+max speed       = 0.771458
+body 0          = (-2.152561, 0.163323, -0.036169)
+body N-1        = (1.255880, 0.234370, -0.852935)
+time            = 0.000145 s  (0.000014 s/step)
+throughput      = 4.555 G interactions/s
+final state written to gpu.bin
+N = 257
+max position difference = 3.725e-09 (body 214)
+rms position difference = 2.324e-10
+PASS
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 6.016 s  (0.602 s/step)
+throughput      = 0.446 G interactions/s
+final state written to ref.bin
+version         = direct, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036485 s  (0.003648 s/step)
+throughput      = 73.575 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.015615 s  (0.001562 s/step)
+throughput      = 171.908 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.016162 s  (0.001616 s/step)
+throughput      = 166.086 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = tiled, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.018081 s  (0.001808 s/step)
+throughput      = 148.461 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+version         = optimized, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.005771 s  (0.000577 s/step)
+throughput      = 465.171 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 1.192e-07 (body 453)
+rms position difference = 1.773e-09
+PASS
+version         = optimized, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.006115 s  (0.000611 s/step)
+throughput      = 439.001 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 1.192e-07 (body 453)
+rms position difference = 1.773e-09
+PASS
+version         = optimized, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.007668 s  (0.000767 s/step)
+throughput      = 350.055 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 1.192e-07 (body 453)
+rms position difference = 1.773e-09
+PASS
+Warmup: tiled N=16384 threads=128
+version         = tiled, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.015617 s  (0.001562 s/step)
+throughput      = 171.882 G interactions/s
+Measured run 1: tiled N=16384 threads=128
+version         = tiled, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.015616 s  (0.001562 s/step)
+throughput      = 171.892 G interactions/s
+Measured run 2: tiled N=16384 threads=128
+version         = tiled, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.015617 s  (0.001562 s/step)
+throughput      = 171.892 G interactions/s
+Measured run 3: tiled N=16384 threads=128
+version         = tiled, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.015613 s  (0.001561 s/step)
+throughput      = 171.929 G interactions/s
+Warmup: tiled N=16384 threads=256
+version         = tiled, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.016166 s  (0.001617 s/step)
+throughput      = 166.048 G interactions/s
+Measured run 1: tiled N=16384 threads=256
+version         = tiled, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.016166 s  (0.001617 s/step)
+throughput      = 166.051 G interactions/s
+Measured run 2: tiled N=16384 threads=256
+version         = tiled, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.016162 s  (0.001616 s/step)
+throughput      = 166.093 G interactions/s
+Measured run 3: tiled N=16384 threads=256
+version         = tiled, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.016165 s  (0.001616 s/step)
+throughput      = 166.060 G interactions/s
+Warmup: tiled N=16384 threads=512
+version         = tiled, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.018082 s  (0.001808 s/step)
+throughput      = 148.453 G interactions/s
+Measured run 1: tiled N=16384 threads=512
+version         = tiled, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.018077 s  (0.001808 s/step)
+throughput      = 148.494 G interactions/s
+Measured run 2: tiled N=16384 threads=512
+version         = tiled, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.018082 s  (0.001808 s/step)
+throughput      = 148.455 G interactions/s
+Measured run 3: tiled N=16384 threads=512
+version         = tiled, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.018082 s  (0.001808 s/step)
+throughput      = 148.455 G interactions/s
+Warmup: optimized N=16384 threads=128
+version         = optimized, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.005772 s  (0.000577 s/step)
+throughput      = 465.034 G interactions/s
+Measured run 1: optimized N=16384 threads=128
+version         = optimized, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.005771 s  (0.000577 s/step)
+throughput      = 465.176 G interactions/s
+Measured run 2: optimized N=16384 threads=128
+version         = optimized, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.005770 s  (0.000577 s/step)
+throughput      = 465.191 G interactions/s
+Measured run 3: optimized N=16384 threads=128
+version         = optimized, threads/block = 128
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.005771 s  (0.000577 s/step)
+throughput      = 465.129 G interactions/s
+Warmup: optimized N=16384 threads=256
+version         = optimized, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.006112 s  (0.000611 s/step)
+throughput      = 439.162 G interactions/s
+Measured run 1: optimized N=16384 threads=256
+version         = optimized, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.006113 s  (0.000611 s/step)
+throughput      = 439.144 G interactions/s
+Measured run 2: optimized N=16384 threads=256
+version         = optimized, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.006115 s  (0.000611 s/step)
+throughput      = 439.003 G interactions/s
+Measured run 3: optimized N=16384 threads=256
+version         = optimized, threads/block = 256
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.006113 s  (0.000611 s/step)
+throughput      = 439.121 G interactions/s
+Warmup: optimized N=16384 threads=512
+version         = optimized, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.007665 s  (0.000767 s/step)
+throughput      = 350.189 G interactions/s
+Measured run 1: optimized N=16384 threads=512
+version         = optimized, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.007667 s  (0.000767 s/step)
+throughput      = 350.138 G interactions/s
+Measured run 2: optimized N=16384 threads=512
+version         = optimized, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.007667 s  (0.000767 s/step)
+throughput      = 350.110 G interactions/s
+Measured run 3: optimized N=16384 threads=512
+version         = optimized, threads/block = 512
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.007668 s  (0.000767 s/step)
+throughput      = 350.074 G interactions/s
+Warmup: tiled N=131072 threads=128
+version         = tiled, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.246285 s  (0.024629 s/step)
+throughput      = 697.560 G interactions/s
+Measured run 1: tiled N=131072 threads=128
+version         = tiled, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.246310 s  (0.024631 s/step)
+throughput      = 697.491 G interactions/s
+Measured run 2: tiled N=131072 threads=128
+version         = tiled, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.246255 s  (0.024625 s/step)
+throughput      = 697.646 G interactions/s
+Measured run 3: tiled N=131072 threads=128
+version         = tiled, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.245977 s  (0.024598 s/step)
+throughput      = 698.434 G interactions/s
+Warmup: tiled N=131072 threads=256
+version         = tiled, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.235743 s  (0.023574 s/step)
+throughput      = 728.754 G interactions/s
+Measured run 1: tiled N=131072 threads=256
+version         = tiled, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.235570 s  (0.023557 s/step)
+throughput      = 729.291 G interactions/s
+Measured run 2: tiled N=131072 threads=256
+version         = tiled, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.235760 s  (0.023576 s/step)
+throughput      = 728.702 G interactions/s
+Measured run 3: tiled N=131072 threads=256
+version         = tiled, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.235426 s  (0.023543 s/step)
+throughput      = 729.736 G interactions/s
+Warmup: tiled N=131072 threads=512
+version         = tiled, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.220046 s  (0.022005 s/step)
+throughput      = 780.738 G interactions/s
+Measured run 1: tiled N=131072 threads=512
+version         = tiled, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.218417 s  (0.021842 s/step)
+throughput      = 786.562 G interactions/s
+Measured run 2: tiled N=131072 threads=512
+version         = tiled, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.218415 s  (0.021841 s/step)
+throughput      = 786.571 G interactions/s
+Measured run 3: tiled N=131072 threads=512
+version         = tiled, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.218413 s  (0.021841 s/step)
+throughput      = 786.577 G interactions/s
+Warmup: optimized N=131072 threads=128
+version         = optimized, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.124119 s  (0.012412 s/step)
+throughput      = 1384.150 G interactions/s
+Measured run 1: optimized N=131072 threads=128
+version         = optimized, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.124122 s  (0.012412 s/step)
+throughput      = 1384.116 G interactions/s
+Measured run 2: optimized N=131072 threads=128
+version         = optimized, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.124103 s  (0.012410 s/step)
+throughput      = 1384.329 G interactions/s
+Measured run 3: optimized N=131072 threads=128
+version         = optimized, threads/block = 128
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.125085 s  (0.012508 s/step)
+throughput      = 1373.461 G interactions/s
+Warmup: optimized N=131072 threads=256
+version         = optimized, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.120291 s  (0.012029 s/step)
+throughput      = 1428.191 G interactions/s
+Measured run 1: optimized N=131072 threads=256
+version         = optimized, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.119392 s  (0.011939 s/step)
+throughput      = 1438.945 G interactions/s
+Measured run 2: optimized N=131072 threads=256
+version         = optimized, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.119391 s  (0.011939 s/step)
+throughput      = 1438.961 G interactions/s
+Measured run 3: optimized N=131072 threads=256
+version         = optimized, threads/block = 256
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.120297 s  (0.012030 s/step)
+throughput      = 1428.127 G interactions/s
+Warmup: optimized N=131072 threads=512
+version         = optimized, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.111318 s  (0.011132 s/step)
+throughput      = 1543.321 G interactions/s
+Measured run 1: optimized N=131072 threads=512
+version         = optimized, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.111314 s  (0.011131 s/step)
+throughput      = 1543.371 G interactions/s
+Measured run 2: optimized N=131072 threads=512
+version         = optimized, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.111314 s  (0.011131 s/step)
+throughput      = 1543.375 G interactions/s
+Measured run 3: optimized N=131072 threads=512
+version         = optimized, threads/block = 512
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.111312 s  (0.011131 s/step)
+throughput      = 1543.394 G interactions/s
