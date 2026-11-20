@@ -18,11 +18,12 @@
 // and the last frame matches the CPU reference exactly.
 //
 // Build: make q2           (nvcc -O3 -arch=sm_90 -lineinfo)
-// Run:   ./frame_pipeline
+// Run:   ./frame_pipeline [all|baseline|calibrate|vignette|rotate|histogram]
 #include <algorithm>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 #include "check.h"
 
@@ -144,6 +145,65 @@ __global__ void histogram(const float *__restrict__ img, unsigned *__restrict__ 
         atomicAdd(&hist[bin_of(img[i])], 1u);
 }
 
+// Adjacent lanes process adjacent columns (four sectors per warp request).
+__global__ void calibrate_coalesced(const float *__restrict__ raw,
+                                    const float *__restrict__ dark,
+                                    const float *__restrict__ gain,
+                                    float *__restrict__ out) {
+    int c = blockIdx.x * blockDim.x + threadIdx.x;
+    int r = blockIdx.y * blockDim.y + threadIdx.y;
+    if (r < H && c < W) {
+        size_t i = (size_t)r * W + c;
+        out[i] = (raw[i] - dark[i]) * gain[i];
+    }
+}
+
+// Cover every row in one launch, using the unchanged host-generated table.
+__global__ void vignette_frame(float *img, const float *vig) {
+    size_t i = (size_t)blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < NPIX) img[i] *= vig[i / W];
+}
+
+__global__ void rotate_padded(const float *__restrict__ in,
+                              float *__restrict__ out) {
+    // Stride 33 makes a tile column visit all 32 shared-memory banks.
+    __shared__ float tile[TILE][TILE + 1];
+    int x = blockIdx.x * TILE + threadIdx.x;
+    int y = blockIdx.y * TILE + threadIdx.y;
+    tile[threadIdx.y][threadIdx.x] = in[(size_t)y * W + x];
+    __syncthreads();
+    x = blockIdx.y * TILE + threadIdx.x;
+    y = blockIdx.x * TILE + threadIdx.y;
+    out[(size_t)y * H + x] = tile[threadIdx.x][threadIdx.y];
+}
+
+// Eight warp-private histograms avoid contention between warps. Within a
+// warp, lanes with the same bin combine their updates before one atomic.
+// Launch with 256 threads and a bounded grid to amortize the global merge.
+__global__ void histogram_local(const float *__restrict__ img,
+                                 unsigned *__restrict__ hist) {
+    __shared__ unsigned local[8][BINS];
+    int lane = threadIdx.x & 31;
+    int warp = threadIdx.x / 32;
+    for (int k = threadIdx.x; k < 8 * BINS; k += blockDim.x)
+        local[k / BINS][k % BINS] = 0;
+    __syncthreads();
+
+    for (size_t i = (size_t)blockIdx.x * blockDim.x + threadIdx.x;
+         i < NPIX; i += (size_t)gridDim.x * blockDim.x) {
+        int bin = bin_of(img[i]);
+        unsigned peers = __match_any_sync(__activemask(), bin);
+        if (lane == __ffs(peers) - 1)
+            atomicAdd(&local[warp][bin], (unsigned)__popc(peers));
+    }
+    __syncthreads();
+
+    unsigned count = 0;
+    #pragma unroll
+    for (int w = 0; w < 8; w++) count += local[w][threadIdx.x];
+    if (count) atomicAdd(&hist[threadIdx.x], count);
+}
+
 // ---------------------------------------------------------------------
 // CPU reference for one frame: the displayed image and its histogram.
 // ---------------------------------------------------------------------
@@ -159,7 +219,20 @@ void reference(int f, const std::vector<float> &vig, std::vector<float> &disp,
         }
 }
 
-int main() {
+int main(int argc, char **argv) {
+    const char *mode = argc > 1 ? argv[1] : "all";
+    bool all = std::strcmp(mode, "all") == 0;
+    bool fix_cal = all || std::strcmp(mode, "calibrate") == 0;
+    bool fix_vig = all || std::strcmp(mode, "vignette") == 0;
+    bool fix_rot = all || std::strcmp(mode, "rotate") == 0;
+    bool fix_hist = all || std::strcmp(mode, "histogram") == 0;
+    if (argc > 2 || !(all || fix_cal || fix_vig || fix_rot || fix_hist ||
+                     std::strcmp(mode, "baseline") == 0)) {
+        std::fprintf(stderr, "usage: %s [all|baseline|calibrate|vignette|rotate|histogram]\n",
+                     argv[0]);
+        return 2;
+    }
+    std::printf("variant: %s\n", mode);
     // Vignetting: the optics dim the top and bottom rows of the sensor.
     std::vector<float> vig(H);
     for (int r = 0; r < H; r++) {
@@ -167,7 +240,7 @@ int main() {
         vig[r] = 1.0f / (1.0f + 0.3f * d * d);
     }
 
-    float *d_raw, *d_dark, *d_gain, *d_work, *d_disp;
+    float *d_raw, *d_dark, *d_gain, *d_work, *d_disp, *d_vig;
     unsigned *d_hist;
     CUDA_CHECK(cudaMalloc(&d_raw,  FRAMES * NPIX * sizeof(float)));
     CUDA_CHECK(cudaMalloc(&d_dark, NPIX * sizeof(float)));
@@ -175,6 +248,9 @@ int main() {
     CUDA_CHECK(cudaMalloc(&d_work, NPIX * sizeof(float)));
     CUDA_CHECK(cudaMalloc(&d_disp, NPIX * sizeof(float)));
     CUDA_CHECK(cudaMalloc(&d_hist, FRAMES * BINS * sizeof(unsigned)));
+
+    CUDA_CHECK(cudaMalloc(&d_vig, H * sizeof(float)));
+    CUDA_CHECK(cudaMemcpy(d_vig, vig.data(), H * sizeof(float), cudaMemcpyHostToDevice));
 
     make_frames<<<1024, 256>>>(d_raw);
     make_calibration<<<1024, 256>>>(d_dark, d_gain);
@@ -192,17 +268,32 @@ int main() {
         unsigned    *hist = d_hist + f * BINS;
 
         dim3 cal_block(32, 8);
-        dim3 cal_grid(H / 32, W / 8);
-        calibrate<<<cal_grid, cal_block>>>(raw, d_dark, d_gain, d_work);
+        if (fix_cal) {
+            dim3 cal_grid(W / 32, H / 8);
+            calibrate_coalesced<<<cal_grid, cal_block>>>(raw, d_dark, d_gain, d_work);
+        } else {
+            dim3 cal_grid(H / 32, W / 8);
+            calibrate<<<cal_grid, cal_block>>>(raw, d_dark, d_gain, d_work);
+        }
 
-        for (int r = 0; r < H; r++)
-            vignette_row<<<W / 256, 256>>>(d_work + (size_t)r * W, vig[r]);
+        if (fix_vig) {
+            vignette_frame<<<(unsigned)(NPIX / 256), 256>>>(d_work, d_vig);
+        } else {
+            for (int r = 0; r < H; r++)
+                vignette_row<<<W / 256, 256>>>(d_work + (size_t)r * W, vig[r]);
+        }
 
         dim3 rot_block(TILE, TILE);
         dim3 rot_grid(W / TILE, H / TILE);
-        rotate<<<rot_grid, rot_block>>>(d_work, d_disp);
+        if (fix_rot)
+            rotate_padded<<<rot_grid, rot_block>>>(d_work, d_disp);
+        else
+            rotate<<<rot_grid, rot_block>>>(d_work, d_disp);
 
-        histogram<<<(unsigned)(NPIX / 256), 256>>>(d_disp, hist);
+        if (fix_hist)
+            histogram_local<<<1024, 256>>>(d_disp, hist);
+        else
+            histogram<<<(unsigned)(NPIX / 256), 256>>>(d_disp, hist);
 
         CUDA_CHECK(cudaGetLastError());
     }
@@ -248,6 +339,8 @@ int main() {
                 ms, FRAMES, ms / FRAMES);
 
     cudaFree(d_raw); cudaFree(d_dark); cudaFree(d_gain);
-    cudaFree(d_work); cudaFree(d_disp); cudaFree(d_hist);
-    return 0;
+    cudaFree(d_work); cudaFree(d_disp); cudaFree(d_hist); cudaFree(d_vig);
+    CUDA_CHECK(cudaEventDestroy(t0));
+    CUDA_CHECK(cudaEventDestroy(t1));
+    return (bad_px == 0 && bad_bins == 0) ? 0 : 1;
 }

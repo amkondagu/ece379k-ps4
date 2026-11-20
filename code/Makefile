@@ -16,7 +16,7 @@ NVFLAGS  ?= -O3 -arch=$(ARCH) -lineinfo -Xcompiler -Wall,-Wextra
 all: q1
 
 q1: nbody_serial compare
-q2: frame_pipeline
+q2: frame_pipeline frame_pipeline_baseline
 
 nbody_serial: Q1_nbody_serial.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
@@ -29,6 +29,9 @@ nbody: nbody.cu check.h
 	$(NVCC) $(NVFLAGS) -o $@ $<
 
 frame_pipeline: Q2_frame_pipeline.cu check.h
+	$(NVCC) $(NVFLAGS) -o $@ $<
+
+frame_pipeline_baseline: Q2_frame_pipeline_baseline.cu check.h
 	$(NVCC) $(NVFLAGS) -o $@ $<
 
 # Whole-program timeline and per-kernel summary (Nsight Systems).
@@ -46,6 +49,6 @@ metrics: frame_pipeline
 	ncu -k $(K) -c 1 --metrics $(M) ./frame_pipeline
 
 clean:
-	rm -f nbody_serial compare nbody frame_pipeline *.ncu-rep *.nsys-rep *.sqlite
+	rm -f nbody_serial compare nbody frame_pipeline frame_pipeline_baseline *.ncu-rep *.nsys-rep *.sqlite
 
 .PHONY: all q1 q2 nsys ncu metrics clean

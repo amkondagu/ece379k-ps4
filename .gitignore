@@ -15,3 +15,5 @@
 *.nsys-rep
 *.sqlite
 *.qdrep
+
+/code/frame_pipeline_baseline

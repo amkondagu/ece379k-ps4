@@ -14,13 +14,13 @@ mkdir -p results
 date -Is
 hostname
 git rev-parse HEAD
-git hash-object Q2_frame_pipeline.cu
+git hash-object Q2_frame_pipeline_baseline.cu
 module list
 nvcc --version
 nvidia-smi
 nsys --version
 ncu --version
-make -B q2
+make -B frame_pipeline_baseline
 
 cat <<'PREDICTIONS'
 Predictions recorded before implementing any Q2 fixes:
@@ -43,7 +43,7 @@ PREDICTIONS
 # Use unprofiled execution for the actual application timings.
 for run in 0 1 2 3; do
     echo "Unprofiled baseline run $run (0 is warmup)"
-    output=$(./frame_pipeline)
+    output=$(./frame_pipeline_baseline)
     printf '%s\n' "$output"
     if [[ "$output" != *" -> PASS"* ]]; then
         echo "Q2 baseline correctness check did not PASS."
@@ -52,7 +52,7 @@ for run in 0 1 2 3; do
 done
 
 nsys profile --trace=cuda --sample=none --cpuctxsw=none \
-    -o results/q2_baseline -f true ./frame_pipeline
+    -o results/q2_baseline -f true ./frame_pipeline_baseline
 nsys stats --report cuda_gpu_kern_sum,cuda_api_sum,cuda_gpu_mem_size_sum \
     results/q2_baseline.nsys-rep
 nsys export --type sqlite --force-overwrite=true \
@@ -84,7 +84,7 @@ ncu --query-metrics | awk '/gpu__time_duration|l1tex__t_sectors|l1tex__t_request
 for kernel in calibrate vignette_row rotate histogram; do
     ncu --kernel-name-base function -k "$kernel" -c 1 --set full \
         --import-source yes -o "results/q2_baseline_$kernel" -f \
-        ./frame_pipeline
+        ./frame_pipeline_baseline
     # Export all collected raw counters as text for terminal-only review.
     ncu --import "results/q2_baseline_$kernel.ncu-rep" --page raw --csv
 done
