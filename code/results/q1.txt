@@ -1,0 +1,198 @@
+2026-11-19T20:05:45-06:00
+c642-012.vista.tacc.utexas.edu
+6d3e01591a323587cbc1d46d03d0187b91c79609
+
+Currently Loaded Modules:
+  1) ucc/1.9.0   2) ucx/1.22.0   3) cmake/4.1.1   4) xalt/3.1   5) TACC   6) gcc/14.2.0   7) nvpl/26.9   8) cuda/12.8 (g)   9) openmpi/5.0.5
+
+  Where:
+   g:  built for GPU
+
+ 
+
+g++ (GCC) 14.2.0
+Copyright (C) 2024 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+nvcc: NVIDIA (R) Cuda compiler driver
+Copyright (c) 2005-2025 NVIDIA Corporation
+Built on Fri_Feb_21_20:26:18_PST_2025
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+Thu Nov 19 20:05:45 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 615.71.09              KMD Version: 615.71.09     CUDA UMD Version: 13.4     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GH200 120GB             On  |   00000009:01:00.0 Off |                    0 |
+| N/A   27C    P0             83W /  900W |       0MiB /  97871MiB |      0%      Default |
+|                                         |                        |             Disabled |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|  No running processes found                                                             |
++-----------------------------------------------------------------------------------------+
+Small correctness test: partial thread block
+N = 257, steps = 2
+centre of mass  = (0.023891, -0.016902, -0.013717)
+mean radius     = 1.607993
+max speed       = 0.396214
+body 0          = (-2.161089, 0.163033, -0.038308)
+body N-1        = (1.263445, 0.244513, -0.850530)
+time            = 0.000 s  (0.000 s/step)
+throughput      = 0.446 G interactions/s
+final state written to ref_small.bin
+version         = direct
+N = 257, steps = 2
+centre of mass  = (0.023891, -0.016902, -0.013717)
+mean radius     = 1.607993
+max speed       = 0.396214
+body 0          = (-2.161089, 0.163033, -0.038308)
+body N-1        = (1.263445, 0.244513, -0.850530)
+time            = 0.000121 s  (0.000060 s/step)
+throughput      = 1.096 G interactions/s
+final state written to gpu_small.bin
+N = 257
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+Required correctness test: N=16384, steps=10
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 6.048 s  (0.605 s/step)
+throughput      = 0.444 G interactions/s
+final state written to ref.bin
+version         = direct
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036293 s  (0.003629 s/step)
+throughput      = 73.963 G interactions/s
+final state written to gpu.bin
+N = 16384
+max position difference = 0.000e+00 (body 0)
+rms position difference = 0.000e+00
+PASS
+CPU baseline: three measured runs
+CPU run 1
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 6.019 s  (0.602 s/step)
+throughput      = 0.446 G interactions/s
+CPU run 2
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 6.037 s  (0.604 s/step)
+throughput      = 0.445 G interactions/s
+CPU run 3
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 6.026 s  (0.603 s/step)
+throughput      = 0.445 G interactions/s
+Direct GPU warmup: N=16384
+version         = direct
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036296 s  (0.003630 s/step)
+throughput      = 73.957 G interactions/s
+Direct GPU measured run 1: N=16384
+version         = direct
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036302 s  (0.003630 s/step)
+throughput      = 73.944 G interactions/s
+Direct GPU measured run 2: N=16384
+version         = direct
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036292 s  (0.003629 s/step)
+throughput      = 73.965 G interactions/s
+Direct GPU measured run 3: N=16384
+version         = direct
+N = 16384, steps = 10
+centre of mass  = (-0.000002, 0.001127, 0.003595)
+mean radius     = 1.622351
+max speed       = 0.377525
+body 0          = (-2.152671, 0.163344, -0.036317)
+body N-1        = (0.855151, -0.229024, 0.493549)
+time            = 0.036269 s  (0.003627 s/step)
+throughput      = 74.012 G interactions/s
+Direct GPU warmup: N=131072
+version         = direct
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.305207 s  (0.030521 s/step)
+throughput      = 562.893 G interactions/s
+Direct GPU measured run 1: N=131072
+version         = direct
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.307063 s  (0.030706 s/step)
+throughput      = 559.490 G interactions/s
+Direct GPU measured run 2: N=131072
+version         = direct
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.306750 s  (0.030675 s/step)
+throughput      = 560.062 G interactions/s
+Direct GPU measured run 3: N=131072
+version         = direct
+N = 131072, steps = 10
+centre of mass  = (0.000825, -0.000432, 0.002067)
+mean radius     = 1.625638
+max speed       = 0.378138
+body 0          = (-2.152665, 0.163392, -0.036344)
+body N-1        = (1.183058, -0.773793, 0.292533)
+time            = 0.306720 s  (0.030672 s/step)
+throughput      = 560.116 G interactions/s
