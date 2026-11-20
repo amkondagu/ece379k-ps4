@@ -24,7 +24,7 @@ nbody_serial: Q1_nbody_serial.cpp
 compare: Q1_compare.cpp
 	$(CXX) $(CXXFLAGS) -o $@ $<
 
-# Q1 GPU version (Part a): direct port.
+# Q1 GPU versions: ./nbody N steps out.bin direct|tiled|optimized [threads]
 nbody: nbody.cu check.h
 	$(NVCC) $(NVFLAGS) -o $@ $<
 

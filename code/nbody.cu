@@ -1,10 +1,12 @@
-// Q1 direct CUDA port: one thread per body, looping over all sources.
+// Q1 CUDA N-body simulation: direct and shared-memory tiled versions.
 // Build: make nbody
-// Run:   ./nbody [N] [steps] [out.bin]      defaults: 16384 10
+// Run: ./nbody [N] [steps] [out.bin|-] [direct|tiled|optimized] [threads]
+// Defaults: 16384 bodies, 10 steps, no output, direct, 256 threads.
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <vector>
 #include "check.h"
 
@@ -76,6 +78,49 @@ __global__ void acceleration_direct(const Body *b, float3 *acc, int n) {
     acc[i] = make_float3(axi, ayi, azi);
 }
 
+// A block loads each source body once per tile, then all its threads
+// reuse it. float4 keeps only the position and mass needed for forces.
+__global__ void acceleration_tiled(const Body *b, float3 *acc, int n,
+                                   bool fast_rsqrt) {
+    extern __shared__ float4 tile[];
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    float x = 0.0f, y = 0.0f, z = 0.0f;
+    if (i < n) {
+        x = b[i].x;
+        y = b[i].y;
+        z = b[i].z;
+    }
+    float axi = 0.0f, ayi = 0.0f, azi = 0.0f;
+    for (int base = 0; base < n; base += blockDim.x) {
+        int j = base + threadIdx.x;
+        if (j < n)
+            tile[threadIdx.x] = make_float4(b[j].x, b[j].y, b[j].z, b[j].m);
+        __syncthreads();
+
+        int count = n - base;
+        if (count > (int)blockDim.x) count = blockDim.x;
+        if (i < n) {
+            #pragma unroll 8
+            for (int k = 0; k < count; k++) {
+                float dx = tile[k].x - x;
+                float dy = tile[k].y - y;
+                float dz = tile[k].z - z;
+                float r2 = dx * dx + dy * dy + dz * dz + EPS2;
+                float inv_r = fast_rsqrt ? rsqrtf(r2) : 1.0f / sqrtf(r2);
+                float inv_r3 = inv_r * inv_r * inv_r;
+                float scale = tile[k].w * inv_r3;
+                axi += scale * dx;
+                ayi += scale * dy;
+                azi += scale * dz;
+            }
+        }
+        // Even inactive threads must reach both barriers. The second
+        // prevents the next tile load from overwriting data still in use.
+        __syncthreads();
+    }
+    if (i < n) acc[i] = make_float3(axi, ayi, azi);
+}
+
 __global__ void update_bodies(Body *b, const float3 *acc, int n) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i >= n) return;
@@ -93,8 +138,18 @@ int main(int argc, char **argv) {
     const int steps = (argc > 2) ? std::atoi(argv[2]) : 10;
     const char *out = (argc > 3) ? argv[3] : nullptr;
 
-    if (argc > 4 || n <= 0 || steps <= 0) {
-        std::fprintf(stderr, "usage: %s [N > 0] [steps > 0] [out.bin]\n", argv[0]);
+    const char *mode = (argc > 4) ? argv[4] : "direct";
+    bool direct = std::strcmp(mode, "direct") == 0;
+    bool tiled = std::strcmp(mode, "tiled") == 0;
+    bool optimized = std::strcmp(mode, "optimized") == 0;
+    const int threads = (argc > 5) ? std::atoi(argv[5]) : (direct ? 256 : 128);
+    if (out && std::strcmp(out, "-") == 0) out = nullptr;
+
+    if (argc > 6 || n <= 0 || steps <= 0 ||
+        !(direct || tiled || optimized) ||
+        (threads != 128 && threads != 256 && threads != 512)) {
+        std::fprintf(stderr, "usage: %s [N > 0] [steps > 0] [out.bin|-] "
+                     "[direct|tiled|optimized] [128|256|512]\n", argv[0]);
         return 2;
     }
 
@@ -111,17 +166,23 @@ int main(int argc, char **argv) {
     cudaEvent_t t0, t1;
     CUDA_CHECK(cudaEventCreate(&t0));
     CUDA_CHECK(cudaEventCreate(&t1));
-    const int threads = 256;
     const int blocks = (n - 1) / threads + 1;
 
     // Initialize both kernels before timing, without changing the bodies.
-    acceleration_direct<<<blocks, threads>>>(d_b, d_acc, 0);
+    size_t shared_bytes = threads * sizeof(float4);
+    if (direct)
+        acceleration_direct<<<blocks, threads>>>(d_b, d_acc, 0);
+    else
+        acceleration_tiled<<<blocks, threads, shared_bytes>>>(d_b, d_acc, 0, optimized);
     update_bodies<<<blocks, threads>>>(d_b, d_acc, 0);
     KERNEL_CHECK();
 
     CUDA_CHECK(cudaEventRecord(t0));
     for (int s = 0; s < steps; s++) {
-        acceleration_direct<<<blocks, threads>>>(d_b, d_acc, n);
+        if (direct)
+            acceleration_direct<<<blocks, threads>>>(d_b, d_acc, n);
+        else
+            acceleration_tiled<<<blocks, threads, shared_bytes>>>(d_b, d_acc, n, optimized);
         CUDA_CHECK(cudaGetLastError());
         update_bodies<<<blocks, threads>>>(d_b, d_acc, n);
         CUDA_CHECK(cudaGetLastError());
@@ -156,7 +217,7 @@ int main(int argc, char **argv) {
     }
     rmean /= n;
 
-    std::printf("version         = direct\n");
+    std::printf("version         = %s, threads/block = %d\n", mode, threads);
     std::printf("N = %d, steps = %d\n", n, steps);
     std::printf("centre of mass  = (%.6f, %.6f, %.6f)\n", cx, cy, cz);
     std::printf("mean radius     = %.6f\n", rmean);
